@@ -1796,6 +1796,8 @@ socket.on("startServerGame", (data) => {
     const playerBName = getDisplayName(playerBUser, room.playerB);
     
     console.log(`🎯 [SERVER] Sending player names: PlayerA="${playerAName}", PlayerB="${playerBName}"`);
+    console.log(`🎯 [SERVER] PlayerA user:`, playerAUser?.username, "Permanent:", gameServer.permanentUserNames.get(room.playerA.toLowerCase()));
+    console.log(`🎯 [SERVER] PlayerB user:`, playerBUser?.username, "Permanent:", gameServer.permanentUserNames.get(room.playerB.toLowerCase()));
     
     // Notify players that server game started
     io.to(roomId).emit("serverGameStarted", {

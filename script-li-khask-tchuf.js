@@ -294,12 +294,18 @@ function drawScores() {
   ctx.fillStyle = "white";
 
   if (isServerGame) {
-    // Multiplayer server mode - show player addresses with scores
+    // Multiplayer server mode - show player names with scores
+    // Format player names to avoid showing wallet addresses
+    const displayPlayerA = multiplayerPlayerA.startsWith('0x') ? 
+      `Player A` : multiplayerPlayerA;
+    const displayPlayerB = multiplayerPlayerB.startsWith('0x') ? 
+      `Player B` : multiplayerPlayerB;
+    
     ctx.textAlign = "left";
-    ctx.fillText(`${multiplayerPlayerA}: ${leftScore}`, 20, 30);
+    ctx.fillText(`${displayPlayerA}: ${leftScore}`, 20, 30);
 
     ctx.textAlign = "right";
-    ctx.fillText(`${multiplayerPlayerB}: ${rightScore}`, canvas.width - 20, 30);
+    ctx.fillText(`${displayPlayerB}: ${rightScore}`, canvas.width - 20, 30);
   } else if (isConnected) {
     // Legacy multiplayer mode
     const leftName = isHost ? opponentUsername : currentUsername;
@@ -1621,9 +1627,15 @@ function connectToSocketServer(username) {
     const myAddress = connectedWallet?.toLowerCase();
     const isPlayerA = myAddress === data.playerA.toLowerCase();
     
-    // Store player names for score display
-    multiplayerPlayerA = data.playerAName || "Joueur A";
-    // If playerBName looks like a wallet address, try to use a username if available
+    // Store player names for score display - use proper usernames, not wallet addresses
+    if (data.playerAName && !data.playerAName.startsWith('0x')) {
+      multiplayerPlayerA = data.playerAName;
+    } else if (data.playerAUsername) {
+      multiplayerPlayerA = data.playerAUsername;
+    } else {
+      multiplayerPlayerA = "Joueur A";
+    }
+    
     if (data.playerBName && !data.playerBName.startsWith('0x')) {
       multiplayerPlayerB = data.playerBName;
     } else if (data.playerBUsername) {
@@ -1631,6 +1643,8 @@ function connectToSocketServer(username) {
     } else {
       multiplayerPlayerB = "Joueur B";
     }
+    
+    console.log("🎮 Player names set - A:", multiplayerPlayerA, "B:", multiplayerPlayerB);
     
     // Set up client for server-authoritative mode
     isConnected = true;
