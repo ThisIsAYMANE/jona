@@ -1,0 +1,361 @@
+:root{
+  --bg-1: #0b0f1a; /* deep space */
+  --bg-2: #071025; /* dark blue */
+  --panel: rgba(255,255,255,0.03);
+  --glass: rgba(255,255,255,0.04);
+  --accent: #60f0ff; /* cyan */
+  --accent-2: #8a3cff; /* purple */
+  --danger: #ff6b6b;
+  --muted: #9aa6b2;
+  --glass-border: rgba(255,255,255,0.06);
+  --glow: 0 6px 30px rgba(96,240,255,0.08);
+  font-synthesis: none;
+}
+
+/* Page background: animated gradient + vignette for a dramatic gaming feel */
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", Roboto, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  color: #e6f7ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background: radial-gradient(1200px 600px at 10% 10%, rgba(138,60,255,0.08), transparent 10%),
+              radial-gradient(900px 400px at 90% 90%, rgba(96,240,255,0.05), transparent 10%),
+              linear-gradient(160deg, var(--bg-1), var(--bg-2));
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* subtle animated noise layer to give depth */
+body::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><rect width="100%" height="100%" fill="rgba(255,255,255,0.01)"/></svg>');
+  opacity: 0.6;
+  mix-blend-mode: overlay;
+  pointer-events:none;
+}
+
+/* Canvas: elevated, rounded, glassy stage */
+canvas{
+  background: linear-gradient(180deg, rgba(0,0,0,0.85), rgba(0,0,0,0.6));
+  border-radius: 14px;
+  margin-top: 18px;
+  box-shadow: 0 10px 40px rgba(2,6,23,0.7), 0 2px 6px rgba(138,60,255,0.08);
+  border: 1px solid var(--glass-border);
+  max-width: calc(100vw - 48px);
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Mobile canvas */
+@media (max-width: 768px) {
+  canvas {
+    max-width: calc(100vw - 20px);
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+
+/* Laptop optimization for HP 14" models */
+@media (min-width: 769px) and (max-width: 1440px) {
+  canvas {
+    max-width: 750px;
+    width: 90vw;
+    margin-top: 15px;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1441px) {
+  canvas {
+    max-width: 800px;
+    width: 800px;
+    margin-top: 18px;
+  }
+}
+
+/* Primary displays */
+#peerIdDisplay{
+  margin-top: 26px;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+  text-shadow: 0 2px 12px rgba(96,240,255,0.12);
+}
+
+/* Sections layout */
+#authSection, #peerControls{
+  display:flex;
+  gap:12px;
+  margin: 14px;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+}
+
+/* Laptop optimization for UI sections */
+@media (min-width: 769px) and (max-width: 1440px) {
+  #authSection, #peerControls {
+    gap: 15px;
+    margin: 20px;
+    max-width: 90vw;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+input, button, select, textarea{
+  padding:10px 14px;
+  font-size:15px;
+  border-radius:10px;
+  border: 1px solid transparent;
+  outline: none;
+  color: #e9fbff;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  transition: all 180ms ease;
+  box-shadow: var(--glow);
+}
+
+/* Laptop optimization for inputs */
+@media (min-width: 769px) and (max-width: 1440px) {
+  input, button, select, textarea {
+    font-size: 16px;
+    padding: 12px 16px;
+  }
+}
+
+input:focus, textarea:focus, select:focus{
+  border-color: rgba(96,240,255,0.28);
+  box-shadow: 0 6px 30px rgba(96,240,255,0.06);
+}
+
+button{
+  cursor: pointer;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border-radius: 12px;
+  padding: 10px 16px;
+  color: #020617;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 8px 30px rgba(138,60,255,0.08), inset 0 -2px 6px rgba(0,0,0,0.2);
+}
+
+button:hover{
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 12px 50px rgba(138,60,255,0.12);
+}
+
+button:active{ transform: translateY(-1px); }
+
+/* Bouton désactivé / en attente */
+button.disabled, button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+button.disabled:hover, button:disabled:hover {
+  transform: none !important;
+  box-shadow: 0 8px 30px rgba(138,60,255,0.08), inset 0 -2px 6px rgba(0,0,0,0.2);
+}
+
+/* Secondary buttons */
+.force-reconnect-btn{ background: linear-gradient(90deg, #ff7d50, #ff5a3c); color: #0a0a0a; }
+
+#playButton{
+  display: none;
+  font-size: 18px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  z-index: 999;
+}
+
+#gameOver{ font-size:22px; color: var(--danger); font-weight:800; margin-top:18px; text-shadow:0 3px 18px rgba(255,107,107,0.12);} 
+
+#resetGameBtn, #leaveMatchBtn{ margin-top:10px; }
+
+/* Top connected banner: neon glass bar */
+#connectedWithDisplay{
+  width:100%;
+  text-align:center;
+  font-size:16px;
+  font-weight:700;
+  color: var(--accent);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  padding:10px 12px;
+  position: fixed;
+  top:12px; left:50%; transform: translateX(-50%);
+  max-width:980px;
+  border-radius:12px;
+  z-index:1000;
+  box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+  border:1px solid var(--glass-border);
+}
+
+.password-container{ position: relative; display:flex; align-items:center; }
+.password-container input{ padding-right:44px; }
+.password-toggle{ position:absolute; right:8px; background:none; border:none; color:var(--muted); cursor:pointer; }
+
+.forgot-password-container{ text-align:center; width:100%; }
+.forgot-password-link{ color: var(--accent); text-decoration: underline; }
+
+#forfeitBtn{ display:none; margin-top:15px; padding:10px 20px; font-weight:800; cursor:pointer; background: linear-gradient(90deg,#ff8b8b,#ff6b6b); color:#120000; border-radius:10px; }
+
+#createAccountSection{ display:none; flex-direction:column; gap:10px; align-items:center; margin-top:15px; }
+
+#metamaskSection{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:20px 0; padding:14px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); border-radius:12px; border:1px solid var(--glass-border); }
+
+#walletAddress{ color: #8affb8; font-weight:700; text-shadow:0 2px 8px rgba(138,60,255,0.06); }
+
+#peerControls, #joinRoomControls{ margin:20px 0; }
+
+#betAmount{ width:160px; }
+
+#matchInfo{ margin-top:10px; font-weight:800; color: var(--accent); }
+
+#gameOver{ display:none; }
+
+#paymentSection{ 
+  display: none; 
+  margin-top: 20px; 
+  text-align: center;
+  width: auto;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.9);
+  border-radius: 15px;
+  border: 2px solid #60f0ff;
+  max-width: 400px;
+}
+
+#paymentSection[style*="block"] {
+  display: flex !important;
+}
+
+#validatePaymentBtn:disabled {
+  background: #666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+#claimVictoryControls {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 20px;
+  border-radius: 15px;
+  border: 2px solid #60f0ff;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 400px;
+}
+
+/* Chat bubble & window redesigned */
+#chatBubble{ position: fixed; bottom:20px; right:20px; width:64px; height:64px; background: linear-gradient(180deg,#60f0ff,#8a3cff); border-radius: 14px; display:flex; align-items:center; justify-content:center; color:#031023; font-size:28px; cursor:pointer; z-index:999; box-shadow: 0 12px 40px rgba(138,60,255,0.12); border:1px solid rgba(255,255,255,0.06); }
+
+#unreadBadge{ position:absolute; top:-6px; right:-6px; background:var(--danger); color:white; font-size:12px; padding:3px 7px; border-radius:999px; display:none; font-weight:700; }
+
+#chatWindow{ position: fixed; bottom:100px; right:20px; width:360px; height:420px; background: linear-gradient(180deg, rgba(6,10,20,0.86), rgba(3,6,12,0.94)); border-radius:12px; box-shadow: 0 20px 60px rgba(2,6,23,0.7); display:none; flex-direction:column; overflow:hidden; z-index:999; border:1px solid var(--glass-border); }
+
+.chat-header{ background: linear-gradient(90deg,#192435, rgba(138,60,255,0.06)); color:var(--accent); padding:12px; text-align:center; font-weight:800; border-bottom:1px solid rgba(255,255,255,0.02); }
+
+#chatBox{ flex:1; padding:12px; overflow-y:auto; color:#cfeff6; background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent); }
+
+.chat-input-container{ display:flex; border-top:1px solid rgba(255,255,255,0.02); padding:8px; gap:8px; }
+
+#chatInput{ flex:1; border:none; padding:10px; border-radius:8px; background: rgba(255,255,255,0.02); color: #dffaff; }
+.chat-send-btn{ border:none; background: linear-gradient(90deg,#60f0ff,#8a3cff); color:#021020; padding:10px 12px; border-radius:8px; }
+
+/* Tiny neon accents for match/game HUDs */
+.hud-pill{ display:inline-block; padding:8px 12px; background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:999px; border:1px solid var(--glass-border); color:var(--accent); font-weight:700; }
+
+/* Utility: small glowing text */
+.glow{ text-shadow: 0 4px 18px rgba(96,240,255,0.12); }
+
+/* Responsive adjustments */
+@media (max-width: 1100px){
+  canvas{ width: calc(100vw - 48px); }
+  #connectedWithDisplay{ max-width: calc(100vw - 48px); left:24px; transform:none; }
+}
+
+/* Laptop optimization for HP 14" models */
+@media (min-width: 769px) and (max-width: 1440px) {
+  #chatBubble {
+    width: 70px;
+    height: 70px;
+    font-size: 30px;
+    bottom: 30px;
+    right: 30px;
+  }
+  
+  #chatWindow {
+    width: 380px;
+    height: 450px;
+    bottom: 120px;
+    right: 30px;
+  }
+  
+  #connectedWithDisplay {
+    max-width: 90vw;
+    font-size: 17px;
+  }
+  
+  #playButton {
+    font-size: 20px;
+    padding: 14px 28px;
+  }
+  
+  #claimVictoryControls {
+    max-width: 450px;
+    padding: 25px;
+  }
+}
+
+@media (max-width: 520px){
+  button{ padding:10px 12px; font-size:14px; }
+  #chatWindow{ width: 92vw; right:4%; bottom:84px; height:48vh; }
+  #peerIdDisplay{ margin-top:16px; font-size:14px; }
+}
+
+/* Small attention animations */
+@keyframes pulseAccent{
+  0%{ box-shadow: 0 6px 24px rgba(96,240,255,0.05); }
+  50%{ box-shadow: 0 18px 54px rgba(96,240,255,0.12); transform: translateY(-1px); }
+  100%{ box-shadow: 0 6px 24px rgba(96,240,255,0.05); }
+}
+
+.pulse{ animation: pulseAccent 2.6s ease-in-out infinite; }
+
+/* Accessibility: focus outlines */
+button:focus, input:focus, select:focus, textarea:focus{ box-shadow: 0 0 0 4px rgba(96,240,255,0.08); }
+
+/* Keep existing IDs present and styled conservatively so JS interactions remain unchanged */
+/* End of stylesheet */
