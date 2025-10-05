@@ -1104,9 +1104,11 @@ function connectToSocketServer(username) {
     socket = window.socket;
     console.log("🔗 Using existing global socket connection");
   } else {
-    socket = io("http://localhost:3000");
+    // Dynamic server URL detection - works for both localhost and production
+    const serverUrl = window.location.origin;
+    socket = io(serverUrl);
     window.socket = socket; // Make it globally available
-    console.log("🔗 Created new socket connection");
+    console.log(`🔗 Created new socket connection to: ${serverUrl}`);
   }
 
   // Remove existing event listeners to prevent duplicates

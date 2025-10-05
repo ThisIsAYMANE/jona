@@ -6,6 +6,9 @@
  * Built with Node.js, Socket.IO, and Ethereum blockchain integration
  */
 
+// Load environment variables
+require('dotenv').config();
+
 const express = require("express");
 const http = require("http");
 const path = require("path");
@@ -13,10 +16,28 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
+// Environment-based CORS configuration
+const isProduction = process.env.NODE_ENV === 'production';
+const allowedOrigins = isProduction 
+  ? [
+      process.env.ALLOWED_ORIGIN || 'https://cashpong.io',
+      'https://www.cashpong.io',
+      'http://72.60.70.13:4000',
+      'http://72.60.70.13:3000'
+    ]
+  : [
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      'http://localhost:4000',
+      'http://127.0.0.1:4000',
+      '*'
+    ];
+
 const io = new Server(server, {
   cors: { 
-    origin: process.env.NODE_ENV === 'production' ? ["https://yourproductiondomain.com"] : "*",
-    methods: ["GET", "POST"]
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true
   },
   pingTimeout: 60000,
   pingInterval: 25000
@@ -1944,8 +1965,14 @@ socket.on("winningsReceived", (data) => {
 
 });
 
-server.listen(3000, () => {
-  console.log("🚀 Serveur CashPong prêt sur : http://localhost:3000");
+// Dynamic port configuration
+const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
+
+server.listen(PORT, HOST, () => {
+  console.log(`🚀 Serveur CashPong prêt sur : http://${HOST}:${PORT}`);
+  console.log(`🌍 Environment: ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'}`);
+  console.log(`🔗 Allowed origins: ${allowedOrigins.join(', ')}`);
 });
 
 // Polygon Mainnet is already configured and used for all contract calls.
